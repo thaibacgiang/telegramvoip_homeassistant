@@ -1,0 +1,5 @@
+fastapi==0.156.4
+uvicorn==0.54.0
+telethon==1.45.0
+py-tgcalls==2.3.3
+edge-tts==7.3.1

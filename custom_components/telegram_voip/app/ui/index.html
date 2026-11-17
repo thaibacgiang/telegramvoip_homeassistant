@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Telegram VoIP</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true">
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M7.5 3.8 10 8.4 7.9 10.2a15.7 15.7 0 0 0 5.9 5.9l1.8-2.1 4.6 2.5-.7 3a2 2 0 0 1-2 1.6C9.8 20.7 3.3 14.2 2.9 6.5a2 2 0 0 1 1.6-2z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m20 6-11 11-5-5"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/></symbol>
+  </svg>
+
+  <div id="loginView" class="login-shell" hidden>
+    <form id="loginForm" class="login-card" novalidate>
+      <div class="brand brand-large">
+        <span class="brand-mark"><svg class="icon"><use href="#i-phone"/></svg></span>
+        <span><strong>Telegram VoIP</strong><small>Home Assistant add-on</small></span>
+      </div>
+      <h1>Kết nối bảng điều khiển</h1>
+            <p class="muted">Khi mở qua ingress của Home Assistant, bảng điều khiển tự kết nối. Chỉ nhập token khi truy cập trực tiếp cổng add-on; token nằm trong tệp <code>/data/api_token</code> hoặc Cấu hình add-on.</p>
+      <label for="tokenInput">API token</label>
+      <input id="tokenInput" name="token" type="password" autocomplete="current-password" spellcheck="false" required>
+      <p id="loginError" class="form-error" role="alert" hidden></p>
+      <button class="btn btn-primary btn-block" type="submit">Mở bảng điều khiển</button>
+    </form>
+  </div>
+
+  <div id="appView" hidden>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark"><svg class="icon"><use href="#i-phone"/></svg></span>
+        <span><strong>Telegram VoIP</strong><small>Notifier &amp; P2P calls</small></span>
+      </div>
+      <div class="topbar-actions">
+        <span id="connectionPill" class="pill"><span class="dot" id="connectionDot"></span><span id="connectionText">Đang kết nối</span></span>
+        <button id="themeButton" class="icon-btn" type="button" aria-label="Đổi giao diện sáng tối" title="Đổi giao diện">
+          <svg class="icon icon-theme-light"><use href="#i-moon"/></svg>
+          <svg class="icon icon-theme-dark"><use href="#i-sun"/></svg>
+        </button>
+        <button id="lockButton" class="icon-btn" type="button" aria-label="Khóa bảng điều khiển" title="Khóa">
+          <svg class="icon"><use href="#i-logout"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <nav class="mainnav" aria-label="Điều hướng chính">
+      <button class="navbtn is-active" type="button" data-view="overview"><svg class="icon"><use href="#i-phone"/></svg><span>Tổng quan</span></button>
+      <button class="navbtn" type="button" data-view="accounts"><svg class="icon"><use href="#i-users"/></svg><span>Tài khoản</span></button>
+      <button class="navbtn" type="button" data-view="send"><svg class="icon"><use href="#i-send"/></svg><span>Gửi</span></button>
+      <button class="navbtn" type="button" data-view="calls"><svg class="icon"><use href="#i-bell"/></svg><span>Cuộc gọi</span></button>
+      <button class="navbtn" type="button" data-view="logs"><svg class="icon"><use href="#i-list"/></svg><span>Nhật ký</span></button>
+      <button class="navbtn" type="button" data-view="settings"><svg class="icon"><use href="#i-settings"/></svg><span>Cài đặt</span></button>
+    </nav>
+
+    <main class="shell">
+      <section id="view-overview" class="view">
+        <div class="page-head">
+          <div>
+            <p class="eyebrow">Trung tâm điều khiển</p>
+            <h1>Tổng quan</h1>
+            <p class="muted">Gửi tin nhắn, voice TTS hoặc gọi khẩn cấp qua các tài khoản Telegram đã đăng nhập.</p>
+          </div>
+          <button class="btn btn-ghost" type="button" data-refresh><svg class="icon"><use href="#i-refresh"/></svg>Làm mới</button>
+        </div>
+
+        <div class="stat-grid">
+          <article class="stat-card"><span class="stat-label">Tài khoản online</span><strong id="statAccounts">0/0</strong><span class="stat-hint" id="statAccountsHint">Chưa có tài khoản</span></article>
+          <article class="stat-card"><span class="stat-label">Cuộc gọi đang hoạt động</span><strong id="statCalls">0</strong><span class="stat-hint" id="statCallsHint">Không có cuộc gọi</span></article>
+          <article class="stat-card"><span class="stat-label">Tin nhắn đã gửi</span><strong id="statMessages">0</strong><span class="stat-hint">Từ lần khởi động add-on</span></article>
+          <article class="stat-card"><span class="stat-label">Voice TTS đã gửi</span><strong id="statVoices">0</strong><span class="stat-hint">Tin nhắn thoại</span></article>
+        </div>
+
+        <div class="grid-2">
+          <article class="panel">
+            <div class="panel-head"><div><h2>Tài khoản</h2><p class="muted">Trạng thái phiên Telegram</p></div><button class="btn btn-ghost btn-sm" type="button" data-goto="accounts">Quản lý</button></div>
+            <div id="overviewAccounts" class="account-list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-head"><div><h2>Hoạt động gần đây</h2><p class="muted">Sự kiện mới nhất</p></div><button class="btn btn-ghost btn-sm" type="button" data-goto="logs">Xem tất cả</button></div>
+            <div id="overviewEvents" class="event-list"></div>
+          </article>
+        </div>
+
+        <article class="panel quick-panel">
+          <div class="panel-head"><div><h2>Thao tác nhanh</h2><p class="muted">Mở biểu mẫu với tài khoản mặc định</p></div></div>
+          <div class="quick-actions">
+            <button class="quick-action" type="button" data-goto="send"><span class="quick-icon"><svg class="icon"><use href="#i-send"/></svg></span><span><strong>Gửi tin nhắn</strong><small>Tin nhắn văn bản hoặc voice TTS</small></span></button>
+            <button class="quick-action" type="button" data-goto="calls"><span class="quick-icon danger"><svg class="icon"><use href="#i-bell"/></svg></span><span><strong>Chuông báo động</strong><small>Gọi lặp và đọc TTS khi nghe máy</small></span></button>
+          </div>
+        </article>
+      </section>
+
+      <section id="view-accounts" class="view" hidden>
+        <div class="page-head">
+          <div><p class="eyebrow">Phiên Telegram</p><h1>Tài khoản</h1><p class="muted">Mỗi số điện thoại là một phiên Telethon độc lập trên add-on.</p></div>
+          <button id="addAccountButton" class="btn btn-primary" type="button"><svg class="icon"><use href="#i-plus"/></svg>Thêm tài khoản</button>
+        </div>
+        <div id="accountGrid" class="card-grid"></div>
+        <div id="accountsEmpty" class="empty-state" hidden>
+          <svg class="icon icon-xl"><use href="#i-users"/></svg>
+          <h2>Chưa có tài khoản</h2>
+          <p class="muted">Thêm số điện thoại phụ, nhập mã OTP Telegram và mật khẩu 2FA nếu có.</p>
+          <button class="btn btn-primary" type="button" data-add-account><svg class="icon"><use href="#i-plus"/></svg>Thêm tài khoản đầu tiên</button>
+        </div>
+      </section>
+
+      <section id="view-send" class="view" hidden>
+        <div class="page-head"><div><p class="eyebrow">Tin nhắn</p><h1>Gửi thông báo</h1><p class="muted">Gửi văn bản hoặc chuyển văn bản thành voice note tiếng Việt.</p></div></div>
+        <div class="grid-2 align-start">
+          <form id="sendForm" class="panel form-panel">
+            <div class="field-row">
+              <div class="field"><label for="sendAccount">Tài khoản gửi</label><select id="sendAccount" name="account"></select></div>
+              <div class="field"><label for="sendTo">Người nhận</label><input id="sendTo" name="to" list="recipientOptions" placeholder="@username, +849..., ID" autocomplete="off" required><datalist id="recipientOptions"></datalist></div>
+            </div>
+            <div class="field">
+              <span class="label">Kiểu gửi</span>
+              <div class="segmented" role="group" aria-label="Kiểu gửi">
+                <label><input type="radio" name="mode" value="message" checked><span>Tin nhắn</span></label>
+                <label><input type="radio" name="mode" value="tts"><span>Voice TTS</span></label>
+                <label><input type="radio" name="mode" value="photo"><span>Ảnh</span></label>
+              </div>
+            </div>
+            <div class="field" id="sendTextField"><label for="sendText">Nội dung</label><textarea id="sendText" name="message" rows="5" maxlength="4096" placeholder="Nội dung cần gửi..." required></textarea><span class="hint"><span id="sendCount">0</span>/4096 ký tự</span></div>
+            <div id="voiceFields" hidden>
+              <div class="field-row">
+                <div class="field"><label for="sendVoice">Giọng đọc</label><select id="sendVoice" name="voice"></select></div>
+                <div class="field"><label for="sendRate">Tốc độ</label><input id="sendRate" name="rate" value="+0%" maxlength="8"></div>
+              </div>
+              <div class="field"><label for="sendCaption">Chú thích voice (tùy chọn)</label><input id="sendCaption" name="caption" maxlength="256" placeholder="Ví dụ: Cảnh báo cửa chính"></div>
+            </div>
+            <div id="photoFields" hidden>
+              <div class="field"><label for="sendPhotoUrl">URL ảnh</label><input id="sendPhotoUrl" type="url" placeholder="https://example.com/camera.jpg" autocomplete="off"><span class="hint">URL phải truy cập được từ Internet; ảnh nội bộ nên chọn file bên dưới.</span></div>
+              <div class="field"><label for="sendPhotoFile">Chọn ảnh</label><input id="sendPhotoFile" type="file" accept="image/jpeg,image/png,image/webp"><span class="hint">Tối đa 8 MB; ảnh không được lưu lâu trên add-on.</span></div>
+              <div class="field"><label for="sendPhotoCaption">Chú thích ảnh (tùy chọn)</label><input id="sendPhotoCaption" maxlength="1024" placeholder="Ví dụ: Ảnh camera cửa chính"></div>
+            </div>
+            <div class="form-actions"><button id="sendButton" class="btn btn-primary" type="submit"><svg class="icon"><use href="#i-send"/></svg><span>Gửi ngay</span></button><button id="loadDialogsButton" class="btn btn-ghost" type="button">Lấy danh bạ</button></div>
+          </form>
+          <aside class="panel help-panel">
+            <h2>Cách nhập người nhận</h2>
+            <ul class="help-list">
+              <li><strong>@username</strong><span>Cách ổn định nhất nếu người nhận có username.</span></li>
+              <li><strong>+849xxxxxxxx</strong><span>Telegram chỉ trả về số nếu tài khoản gửi được phép thấy số đó.</span></li>
+              <li><strong>ID số</strong><span>Dùng ID người dùng Telegram, không phải ID nhóm.</span></li>
+            </ul>
+            <div class="notice"><svg class="icon"><use href="#i-alert"/></svg><p>Voice TTS mặc định là <strong>vi-VN-HoaiMyNeural</strong> (Tiếng Việt chuẩn). Add-on thử lại 5 lần; với tiếng Việt, nếu Edge vẫn lỗi add-on báo lỗi thay vì dùng espeak-ng để tránh phát âm sai. Nam Minh chỉ là giọng nam thay thế.</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="view-calls" class="view" hidden>
+        <div class="page-head"><div><p class="eyebrow">Khẩn cấp</p><h1>Cuộc gọi &amp; chuông báo</h1><p class="muted">Cuộc gọi Telegram P2P thật. Khi người nhận nghe máy, add-on phát voice TTS.</p></div></div>
+        <div class="grid-2 align-start">
+          <form id="callForm" class="panel form-panel">
+            <div class="field-row">
+              <div class="field"><label for="callAccount">Tài khoản gọi</label><select id="callAccount" name="account"></select></div>
+              <div class="field"><label for="callTo">Người nhận</label><input id="callTo" name="to" list="recipientOptions" placeholder="@username, +849..., ID" autocomplete="off" required></div>
+            </div>
+            <div class="field"><label for="callText">Lời thoại TTS / nội dung</label><textarea id="callText" name="message" rows="4" maxlength="2000" placeholder="Ví dụ: Cảnh báo, phát hiện chuyển động tại cửa chính." required></textarea></div>
+            <div class="field-row">
+              <div class="field"><label for="callVoice">Giọng đọc</label><select id="callVoice" name="voice"></select></div>
+              <div class="field"><label for="callRate">Tốc độ</label><input id="callRate" name="rate" value="+0%" maxlength="8"></div>
+            </div>
+            <div class="field-row three">
+              <div class="field"><label for="callAttempts">Số lần gọi</label><input id="callAttempts" name="attempts" type="number" min="1" max="10" value="2"></div>
+              <div class="field"><label for="callInterval">Chờ giữa lần (giây)</label><input id="callInterval" name="interval" type="number" min="0" max="600" value="15"></div>
+              <div class="field"><label for="callTimeout">Chờ nghe máy (giây)</label><input id="callTimeout" name="ring_timeout" type="number" min="10" max="180" value="45"></div>
+            </div>
+            <label class="check"><input id="callSendMessage" type="checkbox" checked><span>Gửi kèm tin nhắn văn bản trước khi gọi</span></label>
+            <div class="form-actions"><button id="ringButton" class="btn btn-danger" type="submit"><svg class="icon"><use href="#i-bell"/></svg><span>Bắt đầu chuông báo</span></button><button id="oneCallButton" class="btn btn-ghost" type="button">Gọi một lần</button></div>
+            <div class="notice compact"><svg class="icon"><use href="#i-alert"/></svg><p>Người nhận phải cho phép nhận cuộc gọi (Telegram → Cài đặt → Quyền riêng tư → Cuộc gọi). Cuộc gọi tự động có thể vi phạm điều khoản Telegram nếu dùng sai; chỉ dùng tài khoản phụ và người nhận đã đồng ý.</p></div>
+          </form>
+          <div class="stack">
+            <article class="panel">
+              <div class="panel-head"><div><h2>Đang hoạt động</h2><p class="muted">Tự làm mới mỗi 2 giây</p></div></div>
+              <div id="activeCalls" class="call-list"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><div><h2>Lịch sử gần đây</h2><p class="muted">Cuộc gọi và chuông báo</p></div></div>
+              <div id="callHistory" class="call-list"></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-logs" class="view" hidden>
+        <div class="page-head"><div><p class="eyebrow">Sự kiện</p><h1>Nhật ký</h1><p class="muted">Không ghi OTP, mật khẩu 2FA hoặc api_hash.</p></div><button class="btn btn-ghost" type="button" data-refresh-logs><svg class="icon"><use href="#i-refresh"/></svg>Làm mới</button></div>
+        <article class="panel">
+          <div class="panel-head logs-head"><h2>Hoạt động add-on</h2><label class="inline-field" for="logKind">Lọc <select id="logKind"><option value="">Tất cả</option><option value="account">Tài khoản</option><option value="login">Đăng nhập</option><option value="message">Tin nhắn</option><option value="voice">Voice</option><option value="call">Cuộc gọi</option><option value="ring">Chuông báo</option></select></label></div>
+          <div class="table-wrap"><table class="table"><thead><tr><th>Thời gian</th><th>Loại</th><th>Sự kiện</th></tr></thead><tbody id="logRows"></tbody></table></div>
+          <p id="logsEmpty" class="empty-inline" hidden>Chưa có sự kiện.</p>
+        </article>
+      </section>
+
+      <section id="view-settings" class="view" hidden>
+        <div class="page-head"><div><p class="eyebrow">Cấu hình</p><h1>Cài đặt</h1><p class="muted">Thông tin kết nối Home Assistant và mặc định TTS.</p></div></div>
+        <div class="grid-2 align-start">
+          <article class="panel">
+            <h2>Kết nối Home Assistant</h2>
+            <p class="muted">Dùng URL nội bộ của add-on trong integration. Nếu add-on cài từ repository, hostname có thể khác <code>local-telegram-voip</code>.</p>
+            <div class="copy-row"><code id="settingsUrl">http://local-telegram-voip:3332</code><button class="icon-btn" type="button" data-copy-target="settingsUrl" aria-label="Sao chép URL"><svg class="icon"><use href="#i-copy"/></svg></button></div>
+            <label for="settingsToken">API token cho custom integration</label>
+            <div class="copy-row"><input id="settingsToken" type="password" readonly><button class="icon-btn" type="button" data-toggle-token aria-label="Hiện hoặc ẩn token"><svg class="icon"><use href="#i-check"/></svg></button><button class="icon-btn" type="button" data-copy-target="settingsToken" aria-label="Sao chép token"><svg class="icon"><use href="#i-copy"/></svg></button></div>
+            <p class="hint">Dùng token này khi thêm integration; không cần nhập token cho bảng điều khiển ingress.</p>
+            <div class="field"><label for="serviceExample">Ví dụ gọi service</label><textarea id="serviceExample" rows="9" readonly>service: telegram_voip.send_tts
+data:
+  to: "@username"
+  message: "Cảnh báo: phát hiện chuyển động."
+  voice: "vi-VN-HoaiMyNeural"</textarea></div>
+            <div class="field"><label for="ringExample">Ví dụ chuông báo</label><textarea id="ringExample" rows="9" readonly>service: telegram_voip.ring
+data:
+  to: "@username"
+  message: "Báo động! Kiểm tra cửa chính ngay."
+  attempts: 3
+  interval: 15</textarea></div>
+          </article>
+          <article class="panel">
+            <h2>Mặc định add-on</h2>
+            <dl class="kv">
+              <div><dt>Phiên bản</dt><dd id="settingsVersion">-</dd></div>
+              <div><dt>Giọng TTS</dt><dd id="settingsVoice">-</dd></div>
+              <div><dt>Tốc độ</dt><dd id="settingsRate">-</dd></div>
+              <div><dt>Chờ nghe máy</dt><dd id="settingsTimeout">-</dd></div>
+              <div><dt>Số lần gọi</dt><dd id="settingsAttempts">-</dd></div>
+              <div><dt>Chờ giữa lần</dt><dd id="settingsInterval">-</dd></div>
+              <div><dt>Cache TTS</dt><dd id="settingsCache">-</dd></div>
+              <div><dt>API credentials</dt><dd id="settingsApi">-</dd></div>
+            </dl>
+            <div class="notice"><svg class="icon"><use href="#i-alert"/></svg><p>Thông tin Telegram lưu ở khung bên cạnh. Riêng mặc định TTS và chuông vẫn đổi trong tab Cấu hình của add-on.</p></div>
+            <button id="clearSavedToken" class="btn btn-danger btn-block" type="button"><svg class="icon"><use href="#i-logout"/></svg>Khóa bảng điều khiển trên thiết bị này</button>
+          </article>
+          <article class="panel">
+            <h2>Thông tin Telegram</h2>
+            <p class="muted">Lưu vào <code>/data/.env</code> với quyền <code>600</code>. Không cần sửa Configuration hoặc chạy lệnh.</p>
+            <form id="credentialsForm">
+              <div class="field"><label for="settingsApiId">api_id</label><input id="settingsApiId" inputmode="numeric" autocomplete="off" placeholder="12345678"></div>
+              <div class="field"><label for="settingsApiHash">api_hash</label><input id="settingsApiHash" type="password" autocomplete="off" placeholder="Để trống nếu không đổi"><span class="hint">Đã cấu hình: <span id="settingsApiHashState">chưa</span></span></div>
+              <div class="field"><label for="settingsNewToken">API token mới</label><input id="settingsNewToken" type="password" autocomplete="new-password" minlength="16" placeholder="Để trống để giữ token hiện tại"><span class="hint">Tối thiểu 16 ký tự. Đổi token thì cập nhật lại integration.</span></div>
+              <p id="credentialsError" class="form-error" role="alert" hidden></p>
+              <button id="saveCredentialsButton" class="btn btn-primary btn-block" type="submit"><svg class="icon"><use href="#i-check"/></svg>Lưu thông tin</button>
+            </form>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="accountDialog" class="dialog">
+    <form id="accountForm" method="dialog">
+      <div class="dialog-head"><div><h2>Thêm tài khoản Telegram</h2><p class="muted">Đăng nhập bằng số điện thoại phụ.</p></div><button class="icon-btn" type="button" data-close-dialog aria-label="Đóng"><svg class="icon"><use href="#i-x"/></svg></button></div>
+      <div id="accountStepOne">
+        <div class="field"><label for="accountName">Tên gợi nhớ</label><input id="accountName" maxlength="80" placeholder="Ví dụ: Nhà - số phụ" required></div>
+        <div class="field"><label for="accountPhone">Số điện thoại</label><input id="accountPhone" inputmode="tel" autocomplete="tel" placeholder="+849xxxxxxxx" required><span class="hint">Dùng định dạng quốc tế, ví dụ +84901234567.</span></div>
+        <details id="apiDetails" class="details"><summary>Thông tin API Telegram (nâng cao)</summary><div class="field"><label for="accountApiId">api_id</label><input id="accountApiId" inputmode="numeric" placeholder="12345678"></div><div class="field"><label for="accountApiHash">api_hash</label><input id="accountApiHash" type="password" autocomplete="off" placeholder="Chuỗi 32 ký tự"></div><p class="hint">Chỉ cần nếu chưa nhập api_id/api_hash trong Cấu hình add-on. Tạo tại my.telegram.org/apps.</p></details>
+        <p id="apiConfiguredHint" class="hint" hidden>Add-on đã có api_id/api_hash toàn cục; có thể bỏ trống phần nâng cao.</p>
+        <p id="accountError" class="form-error" role="alert" hidden></p>
+        <div class="form-actions"><button class="btn btn-ghost" type="button" data-close-dialog>Hủy</button><button id="sendCodeButton" class="btn btn-primary" type="submit">Gửi mã Telegram</button></div>
+      </div>
+      <div id="accountStepTwo" hidden>
+        <div class="notice compact"><svg class="icon"><use href="#i-check"/></svg><p>Mã đã gửi tới <strong id="codePhone">-</strong>. Nhập mã trong ứng dụng Telegram hoặc SMS.</p></div>
+        <div class="field"><label for="accountCode">Mã đăng nhập</label><input id="accountCode" inputmode="numeric" autocomplete="one-time-code" maxlength="16" placeholder="12345"></div>
+        <div id="passwordField" class="field" hidden><label for="accountPassword">Mật khẩu xác thực 2 lớp</label><input id="accountPassword" type="password" autocomplete="current-password" placeholder="Mật khẩu 2FA"><span class="hint">Tài khoản có 2FA mới cần nhập.</span></div>
+        <p id="accountErrorTwo" class="form-error" role="alert" hidden></p>
+        <div class="form-actions"><button class="btn btn-ghost" type="button" data-close-dialog>Hủy</button><button id="verifyButton" class="btn btn-primary" type="submit"><svg class="icon"><use href="#i-check"/></svg>Xác nhận</button></div>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="false"></div>
+  <script>window.__TGVOIP_TOKEN__ = null;</script>
+  <script src="app.js"></script>
+</body>
+</html>
